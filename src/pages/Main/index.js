@@ -5,13 +5,14 @@ import { Link } from 'react-router-dom';
 import api from '../../services/api';
 
 import Container from '../../components/Container';
-import { Form, SubmitButton, List } from './styles';
+import { Form, SubmitButton, List, Feedback } from './styles';
 
 export default class Main extends Component {
   state = {
     newRepo: '',
     repositories: [],
     loading: false,
+    error: '',
   };
 
   // Carregar dados do localStorage
@@ -37,26 +38,40 @@ export default class Main extends Component {
 
   handleSubmit = async e => {
     e.preventDefault();
+    try {
+      this.setState({ loading: true });
 
-    this.setState({ loading: true });
+      const { newRepo, repositories } = this.state;
+      const response = await api.get(`/repos/${newRepo}`);
 
-    const { newRepo, repositories } = this.state;
-    const response = await api.get(`/repos/${newRepo}`);
+      const repositoryExists = repositories.find(
+        repository => repository.name === response.data.full_name
+      );
 
-    const data = {
-      name: response.data.full_name,
-    };
+      if (repositoryExists) {
+        throw new Error('Repositório duplicado');
+      }
 
-    this.setState({
-      repositories: [...repositories, data],
-      newRepo: '',
-      loading: false,
-    });
+      const data = {
+        name: response.data.full_name,
+      };
+
+      this.setState({
+        repositories: [...repositories, data],
+        newRepo: '',
+        loading: false,
+        error: '',
+      });
+    } catch (err) {
+      this.setState({
+        loading: false,
+        error: err.message,
+      });
+    }
   };
 
   render() {
-    const { newRepo, repositories, loading } = this.state;
-
+    const { newRepo, repositories, loading, error } = this.state;
     return (
       <Container>
         <h1>
@@ -64,7 +79,7 @@ export default class Main extends Component {
           Repositórios
         </h1>
 
-        <Form onSubmit={this.handleSubmit}>
+        <Form onSubmit={this.handleSubmit} error={error !== ''}>
           <input
             type="text"
             value={newRepo}
@@ -72,7 +87,7 @@ export default class Main extends Component {
             placeholder="Adicionar repositório"
           />
 
-          <SubmitButton loading={loading}>
+          <SubmitButton loading={loading ? 1 : 0}>
             {loading ? (
               <FaSpinner color="#FFF" size={14} />
             ) : (
@@ -80,6 +95,8 @@ export default class Main extends Component {
             )}
           </SubmitButton>
         </Form>
+
+        {error && <Feedback>{error}</Feedback>}
 
         <List>
           {repositories.map(repository => (

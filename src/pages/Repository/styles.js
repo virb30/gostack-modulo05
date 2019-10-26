@@ -101,3 +101,35 @@ export const IssueList = styled.ul`
     }
   }
 `;
+
+export const ButtonContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin: 10px auto;
+`;
+
+export const Button = styled.button.attrs(props => ({
+  disabled: props.disabled,
+}))`
+  border-radius: 4px;
+  border: 1px solid #7159c1;
+  color: ${props => (props.active ? '#FFF' : '#7159c1')};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: ${props => (props.active ? '#7159c1' : '#fff')};
+  padding: 5px;
+  margin: 0 10px;
+
+  &[disabled] {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  &:hover:enabled {
+    background: #7159c1;
+    color: #fff;
+  }
+`;

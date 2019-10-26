@@ -4,10 +4,11 @@ export const Form = styled.form`
   margin-top: 30px;
   display: flex;
   flex-direction: row;
+  margin-bottom: 10px;
 
   input {
     flex: 1;
-    border: 1px solid #eee;
+    border: 1px solid ${props => (props.error ? '#FF3A2A' : '#eee')};
     padding: 10px 15px;
     border-radius: 4px;
     font-size: 16px;
@@ -15,13 +16,13 @@ export const Form = styled.form`
 `;
 
 const rotate = keyframes`
-  from {
-    transform: rotate(0deg);
-  }
+from {
+  transform: rotate(0deg);
+}
 
-  to {
-    transform: rotate(360deg);
-  }
+to {
+  transform: rotate(360deg);
+}
 `;
 
 export const SubmitButton = styled.button.attrs(props => ({
@@ -38,7 +39,7 @@ export const SubmitButton = styled.button.attrs(props => ({
   justify-content: center;
   align-items: center;
 
-  &[disabled] {
+  & [disabled] {
     cursor: not-allowed;
     opacity: 0.6;
   }
@@ -72,4 +73,11 @@ export const List = styled.ul`
       text-decoration: none;
     }
   }
+`;
+
+export const Feedback = styled.span`
+  color: #ff3a2a;
+  font-size: 16px;
+  margin-top: 18px;
+  font-weight: 500;
 `;
